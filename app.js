@@ -18,15 +18,15 @@ app.get('/api/expense', (req, res) => {
 
 app.get('/api/expense/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const findExpense = expense.find(item => item.id === id);
-  if (findExpense) {
+  const foundExpense = expense.find(item => item.id === id);
+  if (foundExpense) {
     const expenseHtml = `
       <html>
         <body>
-          <p>ID: ${findExpense.id}</p>
-          <p>Name: ${findExpense.name}</p>
-          <p>Cost: $${findExpense.cost}</p>
-          <p>Created At: ${findExpense.createdAt}</p>
+          <p>ID: ${foundExpense.id}</p>
+          <p>Name: ${foundExpense.name}</p>
+          <p>Cost: $${foundExpense.cost}</p>
+          <p>Created At: ${foundExpense.createdAt}</p>
         </body>
       </html>
     `;
@@ -51,16 +51,24 @@ app.put('/api/expense/:id', (req, res) => {
   if (index !== -1) {
     const updatedExpense = { ...expense[index], ...req.body };
     expense[index] = updatedExpense;
-    res.send({ message: `Expense with ID ${id} updated successfully` });
+    res.send({ message: `Expense with ID ${id} updated successfully`,
+    updatedExpense: updatedExpense
+  });
+    
+  } else {
+    res.status(404).send({ message: `Expense with the ID ${id} was not found!` });
   }
 });
 
 app.delete('/api/expense/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const index = expense.findIndex(item => item.id === id);
-  if (index === -1) {
+  if (index !== -1) {
+    expense.splice(index, 1); 
+    res.send({ message: `Expense with ID ${id} deleted successfully` });
+  } else {
     res.send({ message: `Expense with the ID ${id} was not found!` });
-  } 
+  }
 });
 
 app.listen(port, () => {
