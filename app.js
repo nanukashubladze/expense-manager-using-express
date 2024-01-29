@@ -43,6 +43,15 @@ app.post('/api/expense', (req, res) => {
   expense.push(expenses);
   res.send({data: expenses});
 });
+app.put('/api/expense/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = expense.findIndex(item => item.id === id);
+  if (index !== -1) {
+    const updatedExpense = { ...expense[index], ...req.body };
+    expense[index] = updatedExpense;
+    res.send({ message: `Expense with ID ${id} updated successfully` });
+  }
+});
 
 app.delete('/api/expense/:id', (req, res) => {
   const id = parseInt(req.params.id);
